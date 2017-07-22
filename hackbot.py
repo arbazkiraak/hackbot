@@ -5,6 +5,9 @@ import telepot
 import os
 import urllib2
 import re
+import json
+import datetime
+import requests
 
 def handle(msg):
         chat_id = msg['chat']['id']
@@ -58,6 +61,13 @@ def handle(msg):
 			res = float(Text[position.end():position.end()+9])
 			axx = '1 BTC : '+str(res)+' '+arg1
 			bot.sendMessage(chat_id,str(axx))
+	elif command.startswith('coin'):
+			res = requests.get('https://api.coinsecure.in/v1/exchange/ticker')
+			#print(res.text)
+			j = json.loads(res.text)
+			sell = j['message']['bid']
+			bot.sendMessage(chat_id,str(sell)+' INR')
+
 
 	else:
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
