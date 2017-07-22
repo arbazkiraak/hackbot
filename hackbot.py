@@ -3,6 +3,8 @@ import time
 import subprocess
 import telepot
 import os
+import urllib2
+import re
 
 def handle(msg):
         chat_id = msg['chat']['id']
@@ -16,6 +18,7 @@ def handle(msg):
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x9A HELP MENU: ')
 		bot.sendMessage(chat_id,'1. Run built-in tools : example -> nmap -sV site.com')
 		bot.sendMessage(chat_id,'2. Give Foldername and Command : example -> tool foldername python scriptname.py\n')
+		bot.sendMessage(chat_id,'3. BTC Rate : example -> btc usd or btc anycurrency')
 	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
@@ -44,7 +47,18 @@ def handle(msg):
 			bot.sendMessage(chat_id,'Error : please check your folder path')
 			bot.sendMessage(chat_id,'Make sure you folder at /root/Desktop/pentest/')
 
-		
+	elif command.startswith('btc'):
+			arg1=command[4:]
+			print arg1
+			url= "https://www.google.co.in/search?q=bitcoin+to+"+arg1
+			req = urllib2.Request(url, headers={'User-Agent' : "Magic Browser"}) 
+			con = urllib2.urlopen( req )
+			Text=con.read()
+			position=re.search("1 Bitcoin =",Text)
+			res = float(Text[position.end():position.end()+9])
+			axx = '1 BTC : '+str(res)+' '+arg1
+			bot.sendMessage(chat_id,str(axx))
+
 	else:
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
 		bot.sendMessage(chat_id,command)
