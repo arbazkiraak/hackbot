@@ -8,6 +8,7 @@ import re
 import json
 import datetime
 import requests
+from bs4 import BeautifulSoup
 
 def handle(msg):
         chat_id = msg['chat']['id']
@@ -23,6 +24,7 @@ def handle(msg):
 		bot.sendMessage(chat_id,'2. Give Foldername and Command : example -> tool foldername python scriptname.py\n')
 		bot.sendMessage(chat_id,'3. BTC Rate : example -> btc usd or btc anycurrency')
 		bot.sendMessage(chat_id,'4. Hackerone Disclosed Bugs : usage : h1bugs')
+		bot.sendMessage(chat_id,'5. Get Tweets of any search : usage : tweet bugbounty or tweet motivation ,etc')
 	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
@@ -76,6 +78,29 @@ def handle(msg):
 				print "\n"
 			except KeyError:
 				pass
+	elif command.startswith('tweet'):
+			name=command[6:]
+			print name
+			turl = "https://twitter.com/search?q="+name+"&src=typd&lang=en"
+			print turl
+			response = urllib2.urlopen(turl)
+			htmlt = response.read()
+			soup = BeautifulSoup(htmlt,'lxml')
+
+			tweets = soup.find_all('li','js-stream-item')
+			for tweet in tweets:
+				if tweet.find('p','tweet-text'):
+					try:
+						tweet_user = tweet.find('span','username').text
+						tweet_text = tweet.find('p','tweet-text').text.encode('utf8')
+						tweet_id = tweet['data-item-id']
+						timestamp = tweet.find('a','tweet-timestamp')['title']
+						bot.sendMessage(chat_id,tweet_text+'\n')
+						time.sleep(60)
+					except UnicodeDecodeError:
+						pass
+				else:
+					continue
 	elif command.startswith('coin'):
 			res = requests.get('https://api.coinsecure.in/v1/exchange/ticker')
 			#print(res.text)
