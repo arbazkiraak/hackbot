@@ -78,7 +78,7 @@ def handle(msg):
 				print "\n"
 			except KeyError:
 				pass
-	elif command.startswith('tweet'):
+	elif command.startswith('tweet') or command.startswith('Tweet')::
 		twords=command.split()
 		tname=twords[1]
 		print tname
