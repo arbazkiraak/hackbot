@@ -22,6 +22,7 @@ def handle(msg):
 		bot.sendMessage(chat_id,'1. Run built-in tools : example -> nmap -sV site.com')
 		bot.sendMessage(chat_id,'2. Give Foldername and Command : example -> tool foldername python scriptname.py\n')
 		bot.sendMessage(chat_id,'3. BTC Rate : example -> btc usd or btc anycurrency')
+		bot.sendMessage(chat_id,'4. Hackerone Disclosed Bugs : usage : h1bugs')
 	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
@@ -61,6 +62,20 @@ def handle(msg):
 			res = float(Text[position.end():position.end()+9])
 			axx = '1 BTC : '+str(res)+' '+arg1
 			bot.sendMessage(chat_id,str(axx))
+	elif command.startswith('h1bugs'):
+		bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
+		site = requests.get('https://hackerone.com/hacktivity.json')
+		json_data = json.loads(site.text)
+		for i in range(25):
+			try:
+				title = "Title : "+json_data['reports'][i]['title']
+				url = json_data['reports'][i]['url']
+				urls = "Report at : https://hackerone.com/"+url
+				bot.sendMessage(chat_id,title)
+				bot.sendMessage(chat_id,urls)
+				print "\n"
+			except KeyError:
+				pass
 	elif command.startswith('coin'):
 			res = requests.get('https://api.coinsecure.in/v1/exchange/ticker')
 			#print(res.text)
