@@ -92,7 +92,7 @@ def handle(msg):
 		bot.sendMessage(chat_id,aa)
 
 api = open('api.txt','r')
-api_cont = api.read()
+api_cont = api.read().strip()
 bot = telepot.Bot(api_cont)
 bot.message_loop(handle)
 print '[+] Server is Listenining [+]'
