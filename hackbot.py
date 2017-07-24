@@ -8,6 +8,7 @@ import re
 import json
 import datetime
 import requests
+import threading
 from bs4 import BeautifulSoup
 
 def handle(msg):
@@ -28,7 +29,28 @@ def handle(msg):
 		bot.sendMessage(chat_id,'5. Get Tweets of any search and times : usage : tweet bugbounty 5 or tweet motivation 3')
 		bot.sendMessage(chat_id,'6. Get details of HackerOne disclosed report: usage: #152407 \n A # sign followed by the report number')
 		bot.sendMessage(chat_id,'7. Hackerone Disclosed Bugs for specific program: usage: h1bugs programname')
-	
+		bot.sendMessage(chat_id,'8. Get automatically notified about latest HackerOne Disclosure: usage: notifyh1')
+
+		#automatic hackerone notifier
+	def notifyh1():
+    		site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
+    		json_data = json.loads(site.text)
+    		rep_id = json_data['reports'][0]['id']
+    		rep_str = str(rep_id)
+    		with open('latest.txt', 'r') as rmf:
+    			data = rmf.read().replace('\n', '')
+    		if data != rep_str:
+    			with open('latest.txt', 'w') as wmf:
+    				wmf.write("%s" % rep_str)
+    			bot.sendMessage(chat_id,"New Bug Disclosed on H1")
+    			bot.sendMessage(chat_id,"Title: "+json_data['reports'][0]['title']+" ("+json_data['reports'][0]['readable_substate']+")")
+			bot.sendMessage(chat_id,"https://hackerone.com"+json_data['reports'][0]['url'])
+    		print(time.ctime())
+    		threading.Timer(300, notifyh1).start()
+    	if command.startswith('notifyh1'):
+   			notifyh1()
+   		#end automatic hackerone notifer
+   		
 	#tool
 	elif command.startswith('tool'):
 		words = command.split()
