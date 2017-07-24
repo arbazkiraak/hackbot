@@ -25,6 +25,7 @@ def handle(msg):
 		bot.sendMessage(chat_id,'3. BTC Rate : example -> btc usd or btc anycurrency')
 		bot.sendMessage(chat_id,'4. Hackerone Disclosed Bugs : usage : h1bugs')
 		bot.sendMessage(chat_id,'5. Get Tweets of any search and times : usage : tweet bugbounty 5 or tweet motivation 3')
+		bot.sendMessage(chat_id,'6. Get details of HackerOne disclosed report: usage: #152407 \n A # sign followed by the report number')
 	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
@@ -78,6 +79,7 @@ def handle(msg):
 				print "\n"
 			except KeyError:
 				pass
+		
 	elif command.startswith('tweet') or command.startswith('Tweet'):
 		twords=command.split()
 		tname=twords[1]
@@ -122,6 +124,24 @@ def handle(msg):
 			sell = j['message']['bid']
 			bot.sendMessage(chat_id,str(sell)+' INR')
 
+	elif command.startswith('#'):
+			repnum=command[1:]
+			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading report  \xF0\x9F\x9A\x80')
+			site = requests.get('https://hackerone.com/reports/'+repnum+'.json')
+			json_data = json.loads(site .text)
+			if json_data['has_bounty?'] != 0:
+				bounty='Bounty: '+json_data['formatted_bounty']
+			replink = 'https://hackerone.com/reports/'+repnum
+			title = json_data['title']
+			username = json_data['reporter']['username']
+			url = json_data['reporter']['url']
+			state = json_data['readable_substate']
+			vulninfo = 'Details:\n'+json_data['vulnerability_information']
+			bot.sendMessage(chat_id,parse_mode='HTML',text='(<a href="'+replink+'">#'+repnum+'</a>) <b>'+title+' reported by </b><a href="https://hackerone.com'+url+'">'+username+'</a> <b>('+state+')</b>')
+			if json_data['has_bounty?'] != 0:
+				bot.sendMessage(chat_id,bounty)
+			bot.sendMessage(chat_id,vulninfo)
+			print "\n"
 
 	else:
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
