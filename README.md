@@ -1,6 +1,19 @@
 # hackbot
 Telegram Bot (Development)
 
+```
+sudo -H pip install --upgrade youtube-dl
+git clone https://github.com/arbazkiraak/hackbot.git
+cd hackbot
+pip install lxml
+pip install telepot
+pip install json
+pip install urllib2
+pip install requests
+pip install bs4
+apt-get install youtube-dl
+```
+
 Instruction's at :
 
 https://medium.com/@arbazhussain/telegram-bot-for-hacking-pentesting-b7856db28ef
