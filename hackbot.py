@@ -11,6 +11,7 @@ import requests
 import threading
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
+import youtube_dl
 
 def handle(msg):
         chat_id = msg['chat']['id']
@@ -224,7 +225,8 @@ def handle(msg):
 	#end h1 report details
 
 	#youtube search
-	if command.startswith('yt'):
+	
+        if command.startswith('yt'):
             param = command[3:]
             response = urlopen("https://www.youtube.com/results?search_query="+param)
             data = response.read()
@@ -232,8 +234,23 @@ def handle(msg):
             soup = BeautifulSoup(data,"html.parser")
             vid = soup.find(attrs={'class':'yt-uix-tile-link'})
             link = "https://www.youtube.com"+vid['href']
+            watchid = vid['href']
+            watchid = watchid.replace('/watch?v=','')
             title = vid['title']
             bot.sendMessage(chat_id,title+"\n"+link)
+
+            options = {
+                'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '320'
+                }]
+            }
+
+            with youtube_dl.YoutubeDL(options) as ydl:
+                ydl.download([link])
+                bot.sendAudio(chat_id,audio=open(title+"-"+watchid+".mp3",'rb'))
     #end youtube search
 
 	#direct command
