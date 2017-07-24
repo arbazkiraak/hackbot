@@ -223,7 +223,18 @@ def handle(msg):
 			print "\n"
 	#end h1 report details
 
-
+	#youtube search
+	if command.startswith('yt'):
+            param = command[3:]
+            response = urlopen("https://www.youtube.com/results?search_query="+param)
+            data = response.read()
+            response.close()
+            soup = BeautifulSoup(data,"html.parser")
+            vid = soup.find(attrs={'class':'yt-uix-tile-link'})
+            link = "https://www.youtube.com"+vid['href']
+            title = vid['title']
+            bot.sendMessage(chat_id,title+"\n"+link)
+    #end youtube search
 
 	#direct command
 	else:
