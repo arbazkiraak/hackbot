@@ -19,7 +19,7 @@ def handle(msg):
 
         #direct command execution
         print "Got Command : %s " %command
-        bot.sendMessage(chat_id,'\xF0\x9F\x98\x81 Welcome to ~HackBot v1.0~    \xE2\x9C\x94')
+        bot.sendMessage(chat_id,'\xF0\x9F\x98\x81 Welcome to -+ HackBot v1.2 +- (https://goo.gl/mxQ4Sv) \xE2\x9C\x94')
 	
 	#welcome screen and help
 	if command.startswith('help') or command.startswith('/start'):
