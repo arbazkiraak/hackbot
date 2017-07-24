@@ -8,7 +8,9 @@ import re
 import json
 import datetime
 import requests
+import threading
 from bs4 import BeautifulSoup
+from urllib2 import urlopen
 
 def handle(msg):
         chat_id = msg['chat']['id']
@@ -28,7 +30,30 @@ def handle(msg):
 		bot.sendMessage(chat_id,'5. Get Tweets of any search and times : usage : tweet bugbounty 5 or tweet motivation 3')
 		bot.sendMessage(chat_id,'6. Get details of HackerOne disclosed report: usage: #152407 \n A # sign followed by the report number')
 		bot.sendMessage(chat_id,'7. Hackerone Disclosed Bugs for specific program: usage: h1bugs programname')
-	
+		bot.sendMessage(chat_id,'8. Get automatically notified about latest HackerOne Disclosure: usage: notifyh1')
+		bot.sendMessage(chat_id,'9. Search Wikipedia. usage: wiki yourtiopic')
+
+
+	#automatic hackerone notifier
+	def notifyh1():
+    		site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
+    		json_data = json.loads(site.text)
+    		rep_id = json_data['reports'][0]['id']
+    		rep_str = str(rep_id)
+    		with open('latest.txt', 'r') as rmf:
+    			data = rmf.read().replace('\n', '')
+    		if data != rep_str:
+    			with open('latest.txt', 'w') as wmf:
+    				wmf.write("%s" % rep_str)
+    			bot.sendMessage(chat_id,"\xF0\x9F\x90\x9B New Bug Disclosed on H1 \xF0\x9F\x90\x9B")
+    			bot.sendMessage(chat_id,"Title: "+json_data['reports'][0]['title']+" ("+json_data['reports'][0]['readable_substate']+")")
+			bot.sendMessage(chat_id,"https://hackerone.com"+json_data['reports'][0]['url'])
+    		print(time.ctime())
+    		threading.Timer(300, notifyh1).start()
+    	if command.startswith('notifyh1'):
+   			notifyh1()
+   		#end automatic hackerone notifer
+   		
 	#tool
 	elif command.startswith('tool'):
 		words = command.split()
@@ -60,6 +85,26 @@ def handle(msg):
 	#end tool
 
 	#btc price
+
+	#wiki starts
+	elif command.startswith('wiki'):
+			topic=command[5:]
+			search = topic.replace(' ','_')
+        		response = urlopen("https://en.wikipedia.org/wiki/%s" % search)
+        		data = response.read()
+        		response.close()
+        		soup = BeautifulSoup(data,"html.parser")
+       		 	i = 0
+        		for i in range(len(soup.find_all('p'))):
+           			if(len(soup.findAll('p')[i].contents) == 0):
+                			break
+            		else:
+                		content = soup.findAll('p')[i]
+                		show = content.text + '\n'
+                		bot.sendMessage(chat_id,show)
+                		i+=1
+    #wiki ends
+
 	elif command.startswith('btc'):
 			arg1=command[4:]
 			print arg1
@@ -80,9 +125,9 @@ def handle(msg):
 		if program:
 			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
 			bot.sendMessage(chat_id, 'Program: '+program)
-			site = requests.get('https://hackerone.com/hacktivity.json?filter=type%3Aall%20to%3A'+program)
+			site = requests.get('https://hackerone.com/hacktivity.json?filter=type%3Apublic%20to%3A'+program)
 			json_data = json.loads(site.text)
-			for i in range(25):
+			for i in range(10):
 				try:
 					title = "Title : "+json_data['reports'][i]['title']
 					url = json_data['reports'][i]['url']
@@ -95,9 +140,9 @@ def handle(msg):
 		#common hacktivity
 		else:
 			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
-			site = requests.get('https://hackerone.com/hacktivity.json')
+			site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
 			json_data = json.loads(site.text)
-			for i in range(25):
+			for i in range(10):
 				try:
 					title = "Title : "+json_data['reports'][i]['title']
 					url = json_data['reports'][i]['url']
@@ -178,6 +223,19 @@ def handle(msg):
 			print "\n"
 	#end h1 report details
 
+	#youtube search
+	if command.startswith('yt'):
+            param = command[3:]
+            response = urlopen("https://www.youtube.com/results?search_query="+param)
+            data = response.read()
+            response.close()
+            soup = BeautifulSoup(data,"html.parser")
+            vid = soup.find(attrs={'class':'yt-uix-tile-link'})
+            link = "https://www.youtube.com"+vid['href']
+            title = vid['title']
+            bot.sendMessage(chat_id,title+"\n"+link)
+    #end youtube search
+
 	#direct command
 	else:
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
@@ -196,3 +254,4 @@ print '[=] Type Command from Messenger [=]'
 
 while 1:
         time.sleep(10)
+
