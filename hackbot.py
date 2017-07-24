@@ -55,6 +55,38 @@ def handle(msg):
    		#end automatic hackerone notifer
    		
 	#tool
+	elif command.startswith('yt'):
+            param = command[3:]
+            response = urlopen("https://www.youtube.com/results?search_query="+param)
+            data = response.read()
+            response.close()
+            soup = BeautifulSoup(data,"html.parser")
+            vid = soup.find(attrs={'class':'yt-uix-tile-link'})
+            link = "https://www.youtube.com"+vid['href']
+            title = vid['title']
+            titleshorten = title[0:12]
+            print "Shorten Title is : "+titleshorten
+            bot.sendMessage(chat_id,title+"\n"+link)
+
+            options = {
+    			'format': 'bestaudio/best',
+    			'postprocessors': [{
+        			'key': 'FFmpegExtractAudio',
+        			'preferredcodec': 'mp3',
+        			'preferredquality': '320'
+    			}]
+			}
+
+			
+			
+            with youtube_dl.YoutubeDL(options) as ydl:
+            	print ydl.download([link])
+
+            for i,line in enumerate(os.listdir('.')):
+            	if titleshorten in line:
+            		thatline = line
+            		print "ThatLine: "+thatline
+            		bot.sendAudio(chat_id,audio=open(thatline,'rb'))
 	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
