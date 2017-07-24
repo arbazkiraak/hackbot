@@ -1,6 +1,9 @@
 # hackbot
 Telegram Bot (Development)
 
+Update Feature's:
+https://medium.com/@arbazhussain/hackbot-update-v1-2-whats-new-db82e6038edd
+
 ```
 sudo -H pip install --upgrade youtube-dl
 git clone https://github.com/arbazkiraak/hackbot.git
