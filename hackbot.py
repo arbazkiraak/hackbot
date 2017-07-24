@@ -14,10 +14,11 @@ def handle(msg):
         chat_id = msg['chat']['id']
         command = msg['text']
 
-        
+        #direct command execution
         print "Got Command : %s " %command
         bot.sendMessage(chat_id,'\xF0\x9F\x98\x81 Welcome to ~HackBot v1.0~    \xE2\x9C\x94')
 	
+	#welcome screen and help
 	if command.startswith('help') or command.startswith('/start'):
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x9A HELP MENU: ')
 		bot.sendMessage(chat_id,'1. Run built-in tools : example -> nmap -sV site.com')
@@ -26,6 +27,9 @@ def handle(msg):
 		bot.sendMessage(chat_id,'4. Hackerone Disclosed Bugs : usage : h1bugs')
 		bot.sendMessage(chat_id,'5. Get Tweets of any search and times : usage : tweet bugbounty 5 or tweet motivation 3')
 		bot.sendMessage(chat_id,'6. Get details of HackerOne disclosed report: usage: #152407 \n A # sign followed by the report number')
+		bot.sendMessage(chat_id,'7. Hackerone Disclosed Bugs for specific program: usage: h1bugs programname')
+	
+	#tool
 	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
@@ -53,7 +57,9 @@ def handle(msg):
 		else:
 			bot.sendMessage(chat_id,'Error : please check your folder path')
 			bot.sendMessage(chat_id,'Make sure you folder at /root/Desktop/pentest/')
+	#end tool
 
+	#btc price
 	elif command.startswith('btc'):
 			arg1=command[4:]
 			print arg1
@@ -65,21 +71,45 @@ def handle(msg):
 			res = float(Text[position.end():position.end()+9])
 			axx = '1 BTC : '+str(res)+' '+arg1
 			bot.sendMessage(chat_id,str(axx))
+	#end btc price
+
+	#h1 disclosed report
 	elif command.startswith('h1bugs'):
-		bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
-		site = requests.get('https://hackerone.com/hacktivity.json')
-		json_data = json.loads(site.text)
-		for i in range(25):
-			try:
-				title = "Title : "+json_data['reports'][i]['title']
-				url = json_data['reports'][i]['url']
-				urls = "Report at : https://hackerone.com/"+url
-				bot.sendMessage(chat_id,title)
-				bot.sendMessage(chat_id,urls)
-				print "\n"
-			except KeyError:
-				pass
-		
+		program=command[7:]
+		#specific program
+		if program:
+			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
+			bot.sendMessage(chat_id, 'Program: '+program)
+			site = requests.get('https://hackerone.com/hacktivity.json?filter=type%3Aall%20to%3A'+program)
+			json_data = json.loads(site.text)
+			for i in range(25):
+				try:
+					title = "Title : "+json_data['reports'][i]['title']
+					url = json_data['reports'][i]['url']
+					urls = "Report at : https://hackerone.com/"+url
+					bot.sendMessage(chat_id,title)
+					bot.sendMessage(chat_id,urls)
+					print "\n"
+				except KeyError:
+					pass
+		#common hacktivity
+		else:
+			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
+			site = requests.get('https://hackerone.com/hacktivity.json')
+			json_data = json.loads(site.text)
+			for i in range(25):
+				try:
+					title = "Title : "+json_data['reports'][i]['title']
+					url = json_data['reports'][i]['url']
+					urls = "Report at : https://hackerone.com/"+url
+					bot.sendMessage(chat_id,title)
+					bot.sendMessage(chat_id,urls)
+					print "\n"
+				except KeyError:
+					pass
+	#end h1 disclosed report.
+
+	#twitter search	
 	elif command.startswith('tweet') or command.startswith('Tweet'):
 		twords=command.split()
 		tname=twords[1]
@@ -116,14 +146,18 @@ def handle(msg):
 					pass
 			else:
 				continue
+	#end twitter search
 
+	#coin
 	elif command.startswith('coin'):
 			res = requests.get('https://api.coinsecure.in/v1/exchange/ticker')
 			#print(res.text)
 			j = json.loads(res.text)
 			sell = j['message']['bid']
 			bot.sendMessage(chat_id,str(sell)+' INR')
+	#end coin
 
+	#h1 report details
 	elif command.startswith('#'):
 			repnum=command[1:]
 			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading report  \xF0\x9F\x9A\x80')
@@ -142,7 +176,9 @@ def handle(msg):
 				bot.sendMessage(chat_id,bounty)
 			bot.sendMessage(chat_id,vulninfo)
 			print "\n"
+	#end h1 report details
 
+	#direct command
 	else:
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
 		bot.sendMessage(chat_id,command)
@@ -150,6 +186,7 @@ def handle(msg):
 		aa=subprocess.check_output(command,shell=True)
 		bot.sendMessage(chat_id,aa)
 
+#api credentials
 api = open('api.txt','r')
 api_cont = api.read().strip()
 bot = telepot.Bot(api_cont)
