@@ -33,6 +33,8 @@ def handle(msg):
 		bot.sendMessage(chat_id,'7. Hackerone Disclosed Bugs for specific program: usage: h1bugs programname')
 		bot.sendMessage(chat_id,'8. Get automatically notified about latest HackerOne Disclosure: usage: notifyh1')
 		bot.sendMessage(chat_id,'9. Search Wikipedia. usage: wiki yourtiopic')
+		bot.sendMessage(chat_id,'10. Get YouTube videos delivered right to your box in mp3 format: usage: yt musicname')
+		return 0
 
 
 	#automatic hackerone notifier
@@ -122,8 +124,7 @@ def handle(msg):
 	#wiki starts
 	elif command.startswith('wiki'):
 			topic=command[5:]
-			search = topic.replace(' ','_')
-        		response = urlopen("https://en.wikipedia.org/wiki/%s" % search)
+        		response = urlopen("https://en.wikipedia.org/wiki/"+topic)
         		data = response.read()
         		response.close()
         		soup = BeautifulSoup(data,"html.parser")
@@ -255,10 +256,10 @@ def handle(msg):
 			bot.sendMessage(chat_id,vulninfo)
 			print "\n"
 	#end h1 report details
+	#direct command
 
-	#youtube search
-	
-        if command.startswith('yt'):
+	#start youtube
+	elif command.startswith('yt'):
             param = command[3:]
             response = urlopen("https://www.youtube.com/results?search_query="+param)
             data = response.read()
@@ -285,13 +286,18 @@ def handle(msg):
                 bot.sendAudio(chat_id,audio=open(title+"-"+watchid+".mp3",'rb'))
     #end youtube search
 
-	#direct command
 	else:
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
 		bot.sendMessage(chat_id,command)
 		bot.sendMessage(chat_id,'\xF0\x9F\x92\xBB  [-] Wait.....[-]')
 		aa=subprocess.check_output(command,shell=True)
 		bot.sendMessage(chat_id,aa)
+
+	#youtube search
+	
+    	
+
+
 
 #api credentials
 api = open('api.txt','r')
