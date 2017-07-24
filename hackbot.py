@@ -10,6 +10,7 @@ import datetime
 import requests
 import threading
 from bs4 import BeautifulSoup
+from urllib2 import urlopen
 
 def handle(msg):
         chat_id = msg['chat']['id']
@@ -30,9 +31,10 @@ def handle(msg):
 		bot.sendMessage(chat_id,'6. Get details of HackerOne disclosed report: usage: #152407 \n A # sign followed by the report number')
 		bot.sendMessage(chat_id,'7. Hackerone Disclosed Bugs for specific program: usage: h1bugs programname')
 		bot.sendMessage(chat_id,'8. Get automatically notified about latest HackerOne Disclosure: usage: notifyh1')
+		bot.sendMessage(chat_id,'9. Search Wikipedia. usage: wiki yourtiopic')
 
-		
-		#automatic hackerone notifier
+
+	#automatic hackerone notifier
 	def notifyh1():
     		site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
     		json_data = json.loads(site.text)
@@ -43,7 +45,7 @@ def handle(msg):
     		if data != rep_str:
     			with open('latest.txt', 'w') as wmf:
     				wmf.write("%s" % rep_str)
-    			bot.sendMessage(chat_id,"New Bug Disclosed on H1")
+    			bot.sendMessage(chat_id,"\xF0\x9F\x90\x9B New Bug Disclosed on H1 \xF0\x9F\x90\x9B")
     			bot.sendMessage(chat_id,"Title: "+json_data['reports'][0]['title']+" ("+json_data['reports'][0]['readable_substate']+")")
 			bot.sendMessage(chat_id,"https://hackerone.com"+json_data['reports'][0]['url'])
     		print(time.ctime())
@@ -51,8 +53,6 @@ def handle(msg):
     	if command.startswith('notifyh1'):
    			notifyh1()
    		#end automatic hackerone notifer
-   		
-
    		
 	#tool
 	elif command.startswith('tool'):
@@ -85,6 +85,26 @@ def handle(msg):
 	#end tool
 
 	#btc price
+
+	#wiki starts
+	elif command.startswith('wiki'):
+			topic=command[5:]
+			search = topic.replace(' ','_')
+        		response = urlopen("https://en.wikipedia.org/wiki/%s" % search)
+        		data = response.read()
+        		response.close()
+        		soup = BeautifulSoup(data,"html.parser")
+       		 	i = 0
+        		for i in range(len(soup.find_all('p'))):
+           			if(len(soup.findAll('p')[i].contents) == 0):
+                			break
+            		else:
+                		content = soup.findAll('p')[i]
+                		show = content.text + '\n'
+                		bot.sendMessage(chat_id,show)
+                		i+=1
+    #wiki ends
+
 	elif command.startswith('btc'):
 			arg1=command[4:]
 			print arg1
@@ -202,6 +222,8 @@ def handle(msg):
 			bot.sendMessage(chat_id,vulninfo)
 			print "\n"
 	#end h1 report details
+
+
 
 	#direct command
 	else:
