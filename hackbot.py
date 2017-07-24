@@ -225,16 +225,9 @@ def handle(msg):
 			print "\n"
 	#end h1 report details
 	#direct command
-	else:
-		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
-		bot.sendMessage(chat_id,command)
-		bot.sendMessage(chat_id,'\xF0\x9F\x92\xBB  [-] Wait.....[-]')
-		aa=subprocess.check_output(command,shell=True)
-		bot.sendMessage(chat_id,aa)
 
-	#youtube search
-	
-    	if command.startswith('yt'):
+	#start youtube
+	elif command.startswith('yt'):
             param = command[3:]
             response = urlopen("https://www.youtube.com/results?search_query="+param)
             data = response.read()
@@ -260,6 +253,17 @@ def handle(msg):
                 ydl.download([link])
                 bot.sendAudio(chat_id,audio=open(title+"-"+watchid+".mp3",'rb'))
     #end youtube search
+
+	else:
+		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
+		bot.sendMessage(chat_id,command)
+		bot.sendMessage(chat_id,'\xF0\x9F\x92\xBB  [-] Wait.....[-]')
+		aa=subprocess.check_output(command,shell=True)
+		bot.sendMessage(chat_id,aa)
+
+	#youtube search
+	
+    	
 
 
 
