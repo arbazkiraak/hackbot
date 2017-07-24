@@ -31,6 +31,7 @@ def handle(msg):
 		bot.sendMessage(chat_id,'7. Hackerone Disclosed Bugs for specific program: usage: h1bugs programname')
 		bot.sendMessage(chat_id,'8. Get automatically notified about latest HackerOne Disclosure: usage: notifyh1')
 
+		
 		#automatic hackerone notifier
 	def notifyh1():
     		site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
@@ -50,6 +51,8 @@ def handle(msg):
     	if command.startswith('notifyh1'):
    			notifyh1()
    		#end automatic hackerone notifer
+   		
+
    		
 	#tool
 	elif command.startswith('tool'):
@@ -102,9 +105,9 @@ def handle(msg):
 		if program:
 			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
 			bot.sendMessage(chat_id, 'Program: '+program)
-			site = requests.get('https://hackerone.com/hacktivity.json?filter=type%3Aall%20to%3A'+program)
+			site = requests.get('https://hackerone.com/hacktivity.json?filter=type%3Apublic%20to%3A'+program)
 			json_data = json.loads(site.text)
-			for i in range(25):
+			for i in range(10):
 				try:
 					title = "Title : "+json_data['reports'][i]['title']
 					url = json_data['reports'][i]['url']
@@ -117,9 +120,9 @@ def handle(msg):
 		#common hacktivity
 		else:
 			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
-			site = requests.get('https://hackerone.com/hacktivity.json')
+			site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
 			json_data = json.loads(site.text)
-			for i in range(25):
+			for i in range(10):
 				try:
 					title = "Title : "+json_data['reports'][i]['title']
 					url = json_data['reports'][i]['url']
@@ -218,3 +221,4 @@ print '[=] Type Command from Messenger [=]'
 
 while 1:
         time.sleep(10)
+
