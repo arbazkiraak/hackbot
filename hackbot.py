@@ -9,6 +9,7 @@ import json
 import datetime
 import requests
 import threading
+import wikipedia
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 import youtube_dl
@@ -17,7 +18,6 @@ def handle(msg):
         chat_id = msg['chat']['id']
         command = msg['text']
 
-        #direct command execution
         print "Got Command : %s " %command
         bot.sendMessage(chat_id,'\xF0\x9F\x98\x81 Welcome to -+ HackBot v1.2 +- (https://goo.gl/mxQ4Sv) \xE2\x9C\x94')
 	
@@ -89,24 +89,19 @@ def handle(msg):
 		return 0
 	#end tool
 
-	#wiki starts
+#wiki starts
 	elif command.startswith('wiki'):
-			topic=command[5:]
-        		response = urlopen("https://en.wikipedia.org/wiki/"+topic)
-        		data = response.read()
-        		response.close()
-        		soup = BeautifulSoup(data,"html.parser")
-       		 	i = 0
-        		for i in range(len(soup.find_all('p'))):
-           			if(len(soup.findAll('p')[i].contents) == 0):
-                			break
-            		else:
-                		content = soup.findAll('p')[i]
-                		show = content.text + '\n'
-                		bot.sendMessage(chat_id,show)
-                		i+=1
-            		return 0
-    #wiki ends
+		try:
+			letsplit=command.split()
+			makesplit=letsplit[1]
+			print makesplit
+        		#response = urlopen("https://en.wikipedia.org/wiki/"+topic)
+        		wiksearch = wikipedia.summary(makesplit,sentences=10)
+			bot.sendMessage(chat_id,wiksearch+'\n'+wikipedia.page(makesplit).url)
+		except Exception as e:
+			bot.sendMessage(chat_id,'Error :'+str(e))
+        		
+#wiki ends
 
     #btc price
 	elif command.startswith('btc'):
