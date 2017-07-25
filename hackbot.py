@@ -94,7 +94,6 @@ def handle(msg):
 		try:
 			makesplit=command[5:]
 			print makesplit
-        		#response = urlopen("https://en.wikipedia.org/wiki/"+topic)
         		wiksearch = wikipedia.summary(makesplit,sentences=10)
 			bot.sendMessage(chat_id,wiksearch+'\n'+wikipedia.page(makesplit).url)
 		except Exception as e:
