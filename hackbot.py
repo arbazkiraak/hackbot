@@ -12,6 +12,7 @@ import threading
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 import youtube_dl
+import wikipedia
 
 def handle(msg):
         chat_id = msg['chat']['id']
@@ -123,20 +124,15 @@ def handle(msg):
 
 	#wiki starts
 	elif command.startswith('wiki'):
-			topic=command[5:]
+		try:
+			letsplit=command.split()
+			makesplit=letsplit[1]
         		response = urlopen("https://en.wikipedia.org/wiki/"+topic)
-        		data = response.read()
-        		response.close()
-        		soup = BeautifulSoup(data,"html.parser")
-       		 	i = 0
-        		for i in range(len(soup.find_all('p'))):
-           			if(len(soup.findAll('p')[i].contents) == 0):
-                			break
-            		else:
-                		content = soup.findAll('p')[i]
-                		show = content.text + '\n'
-                		bot.sendMessage(chat_id,show)
-                		i+=1
+        		wiksearch = wikipedia.summary(makesplit,sentences=10)
+			bot.sendMessage(chat_id,wiksearch+'\n'+wikipedia.page(makesplit).url)
+		except Exception as e:
+			bot.sendMessage(chat_id,'Error :'+e)
+        		
     #wiki ends
 
 	elif command.startswith('btc'):
