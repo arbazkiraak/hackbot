@@ -14,7 +14,8 @@ pip install json
 pip install urllib2
 pip install requests
 pip install bs4
-apt-get install youtube-dl
+pip install wikipedia
+apt-get install youtube-dl -y
 ```
 
 Instruction's at :
