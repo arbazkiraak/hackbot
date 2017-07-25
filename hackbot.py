@@ -131,7 +131,7 @@ def handle(msg):
         		wiksearch = wikipedia.summary(makesplit,sentences=10)
 			bot.sendMessage(chat_id,wiksearch+'\n'+wikipedia.page(makesplit).url)
 		except Exception as e:
-			bot.sendMessage(chat_id,'Error :'+e)
+			bot.sendMessage(chat_id,'Error :'+str(e))
         		
     #wiki ends
 
