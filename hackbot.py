@@ -54,13 +54,13 @@ def handle(msg):
 			bot.sendMessage(chat_id,"https://hackerone.com"+json_data['reports'][0]['url'])
     		print(time.ctime())
     		threading.Timer(300, notifyh1).start()
-    	if command.startswith('notifyh1') or command.startswith('Notifyh1'):
+    	if command.startswith('notifyh1'):
    			notifyh1()
    			return 0
    	#end automatic hackerone notifer
    		
 	#tool
-	elif command.startswith('tool') or  command.startswith('Tool'):
+	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
 		cmd=words[2]+' '+words[3]
@@ -90,7 +90,7 @@ def handle(msg):
 	#end tool
 
 #wiki starts
-	elif command.startswith('wiki') or command.startswith('Wiki'):
+	elif command.startswith('wiki'):
 		try:
 			makesplit=command[5:]
 			print makesplit
@@ -104,7 +104,7 @@ def handle(msg):
 #wiki ends
 
     #btc price
-	elif command.startswith('btc') or command.startswith('Btc'):
+	elif command.startswith('btc'):
 			arg1=command[4:]
 			print arg1
 			url= "https://www.google.co.in/search?q=bitcoin+to+"+arg1
@@ -119,7 +119,7 @@ def handle(msg):
 	#end btc price
 
 	#h1 disclosed report
-	elif command.startswith('h1bugs') or command.startswith('H1bugs'):
+	elif command.startswith('h1bugs'):
 		program=command[7:]
 		#specific program
 		if program:
@@ -197,7 +197,7 @@ def handle(msg):
 	#end twitter search
 
 	#coin
-	elif command.startswith('coin') or command.startswith('Coin'):
+	elif command.startswith('coin'):
 			res = requests.get('https://api.coinsecure.in/v1/exchange/ticker')
 			#print(res.text)
 			j = json.loads(res.text)
@@ -261,13 +261,13 @@ def handle(msg):
 		print(time.ctime())
     	threading.Timer(3600, motivation).start()
 
-    	if command.startswith('motivateme') or command.startswith('Motivateme'):
+    	if command.startswith('motivateme'):
     		motivation()
     		return 0
     #end motivation
 
 	#start youtube
-	elif command.startswith('yt') or command.startswith('Yt'):
+	elif command.startswith('yt'):
             param = command[3:]
             response = urlopen("https://www.youtube.com/results?search_query="+param)
             data = response.read()
