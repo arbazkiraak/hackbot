@@ -9,16 +9,15 @@ import json
 import datetime
 import requests
 import threading
+import wikipedia
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 import youtube_dl
-import wikipedia
 
 def handle(msg):
         chat_id = msg['chat']['id']
         command = msg['text']
 
-        #direct command execution
         print "Got Command : %s " %command
         bot.sendMessage(chat_id,'\xF0\x9F\x98\x81 Welcome to -+ HackBot v1.2 +- (https://goo.gl/mxQ4Sv) \xE2\x9C\x94')
 	
@@ -35,8 +34,9 @@ def handle(msg):
 		bot.sendMessage(chat_id,'8. Get automatically notified about latest HackerOne Disclosure: usage: notifyh1')
 		bot.sendMessage(chat_id,'9. Search Wikipedia. usage: wiki yourtiopic')
 		bot.sendMessage(chat_id,'10. Get YouTube videos delivered right to your box in mp3 format: usage: yt musicname')
+		bot.sendMessage(chat_id,'11. Get motivated every hour. Just text -> motivateme')
 		return 0
-
+	#end welcome
 
 	#automatic hackerone notifier
 	def notifyh1():
@@ -56,41 +56,10 @@ def handle(msg):
     		threading.Timer(300, notifyh1).start()
     	if command.startswith('notifyh1'):
    			notifyh1()
-   		#end automatic hackerone notifer
+   			return 0
+   	#end automatic hackerone notifer
    		
 	#tool
-	elif command.startswith('yt'):
-            param = command[3:]
-            response = urlopen("https://www.youtube.com/results?search_query="+param)
-            data = response.read()
-            response.close()
-            soup = BeautifulSoup(data,"html.parser")
-            vid = soup.find(attrs={'class':'yt-uix-tile-link'})
-            link = "https://www.youtube.com"+vid['href']
-            title = vid['title']
-            titleshorten = title[0:12]
-            print "Shorten Title is : "+titleshorten
-            bot.sendMessage(chat_id,title+"\n"+link)
-
-            options = {
-    			'format': 'bestaudio/best',
-    			'postprocessors': [{
-        			'key': 'FFmpegExtractAudio',
-        			'preferredcodec': 'mp3',
-        			'preferredquality': '320'
-    			}]
-			}
-
-			
-			
-            with youtube_dl.YoutubeDL(options) as ydl:
-            	print ydl.download([link])
-
-            for i,line in enumerate(os.listdir('.')):
-            	if titleshorten in line:
-            		thatline = line
-            		print "ThatLine: "+thatline
-            		bot.sendAudio(chat_id,audio=open(thatline,'rb'))
 	elif command.startswith('tool'):
 		words = command.split()
 		mm=words[1]
@@ -99,7 +68,6 @@ def handle(msg):
 		print map(str,final)
 		makeitastring = ' '.join(map(str, final))
 		print makeitastring
-		#print str(words[1]:words[-1])
 		directory='/root/Desktop/pentest/'+str(mm)
 		bot.sendMessage(chat_id,"\xF0\x9F\x92\xBC your Path: "+str(directory))
 		
@@ -118,11 +86,10 @@ def handle(msg):
 		else:
 			bot.sendMessage(chat_id,'Error : please check your folder path')
 			bot.sendMessage(chat_id,'Make sure you folder at /root/Desktop/pentest/')
+		return 0
 	#end tool
 
-	#btc price
-
-	#wiki starts
+#wiki starts
 	elif command.startswith('wiki'):
 		try:
 			letsplit=command.split()
@@ -134,8 +101,9 @@ def handle(msg):
 		except Exception as e:
 			bot.sendMessage(chat_id,'Error :'+str(e))
         		
-    #wiki ends
+#wiki ends
 
+    #btc price
 	elif command.startswith('btc'):
 			arg1=command[4:]
 			print arg1
@@ -147,6 +115,7 @@ def handle(msg):
 			res = float(Text[position.end():position.end()+9])
 			axx = '1 BTC : '+str(res)+' '+arg1
 			bot.sendMessage(chat_id,str(axx))
+			return 0
 	#end btc price
 
 	#h1 disclosed report
@@ -168,7 +137,8 @@ def handle(msg):
 					print "\n"
 				except KeyError:
 					pass
-		#common hacktivity
+
+	#common hacktivity
 		else:
 			bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
 			site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
@@ -183,6 +153,7 @@ def handle(msg):
 					print "\n"
 				except KeyError:
 					pass
+		return 0
 	#end h1 disclosed report.
 
 	#twitter search	
@@ -222,6 +193,7 @@ def handle(msg):
 					pass
 			else:
 				continue
+		return 0
 	#end twitter search
 
 	#coin
@@ -231,6 +203,7 @@ def handle(msg):
 			j = json.loads(res.text)
 			sell = j['message']['bid']
 			bot.sendMessage(chat_id,str(sell)+' INR')
+			return 0
 	#end coin
 
 	#h1 report details
@@ -252,8 +225,46 @@ def handle(msg):
 				bot.sendMessage(chat_id,bounty)
 			bot.sendMessage(chat_id,vulninfo)
 			print "\n"
+			return 0
 	#end h1 report details
-	#direct command
+	
+
+    #motivateme
+	def motivation():
+		turl = "https://twitter.com/search?q=motivation&src=typd&lang=en"
+		bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Get motivated every one hour!  \xF0\x9F\x9A\x80')
+		response = urllib2.urlopen(turl)
+		html = response.read()
+		soup = BeautifulSoup(html,'lxml')
+		tweets = soup.find_all('li','js-stream-item')
+		counts=0
+		timetweets = "3"
+		for tweet in tweets:
+			if tweet.find('p','tweet-text'):
+				try:
+					tweet_user = tweet.find('span','username').text
+					tweet_text = tweet.find('p','tweet-text').text.encode('utf8')
+					tweet_id = tweet['data-item-id']
+					timestamp = tweet.find('a','tweet-timestamp')['title']
+					bot.sendMessage(chat_id,tweet_text+'\n')
+					counts = counts+1
+					if counts == int(timetweets):
+						break
+					else: 
+						pass
+						time.sleep(1)
+					
+				except UnicodeDecodeError:
+					pass
+			else:
+				continue
+		print(time.ctime())
+    	threading.Timer(3600, motivation).start()
+
+    	if command.startswith('motivateme'):
+    		motivation()
+    		return 0
+    #end motivation
 
 	#start youtube
 	elif command.startswith('yt'):
@@ -281,7 +292,9 @@ def handle(msg):
             with youtube_dl.YoutubeDL(options) as ydl:
                 ydl.download([link])
                 bot.sendAudio(chat_id,audio=open(title+"-"+watchid+".mp3",'rb'))
+        	return 0
     #end youtube search
+
 
 	else:
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x88 [+] Got Command \xF0\x9F\x98\x88')
@@ -290,7 +303,6 @@ def handle(msg):
 		aa=subprocess.check_output(command,shell=True)
 		bot.sendMessage(chat_id,aa)
 
-	#youtube search
 	
     	
 
@@ -306,4 +318,3 @@ print '[=] Type Command from Messenger [=]'
 
 while 1:
         time.sleep(10)
-
