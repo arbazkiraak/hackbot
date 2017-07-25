@@ -10,7 +10,6 @@ git clone https://github.com/arbazkiraak/hackbot.git
 cd hackbot
 pip install lxml
 pip install telepot
-pip install json
 pip install urllib2
 pip install requests
 pip install bs4
