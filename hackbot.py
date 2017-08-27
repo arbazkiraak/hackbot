@@ -265,8 +265,8 @@ def handle(msg):
     		return 0
     #end motivation
 
-	#start youtube
-	elif command.startswith('yt') or command.startswith('Yt'):
+    #youtube search
+        elif command.startswith('yt') or command.startswith('Yt'):
             param = command[3:]
             response = urlopen("https://www.youtube.com/results?search_query="+param)
             data = response.read()
@@ -277,6 +277,8 @@ def handle(msg):
             watchid = vid['href']
             watchid = watchid.replace('/watch?v=','')
             title = vid['title']
+            print title
+            print link
             bot.sendMessage(chat_id,title+"\n"+link)
 
             options = {
@@ -287,11 +289,23 @@ def handle(msg):
                     'preferredquality': '320'
                 }]
             }
-
+            filename = title+"-"+watchid+".mp3"
+            filename = filename.replace(" ","_")
+            filename = filename.replace("'","")
+            filename = filename.replace("&","")
+            filename = filename.replace("__","_")
+            filename = filename.replace(",","")
+            filename = filename.replace("(","")
+            filename = filename.replace(")","")
+            filename = filename.replace("[","")
+            filename = filename.replace("]","")
+            filename = filename.replace("{","")
+            filename = filename.replace("}","")
             with youtube_dl.YoutubeDL(options) as ydl:
                 ydl.download([link])
-                bot.sendAudio(chat_id,audio=open(title+"-"+watchid+".mp3",'rb'))
-        	return 0
+                bot.sendAudio(chat_id,audio=open(filename,'rb'))
+                print "Sent!"
+            os.remove(filename)
     #end youtube search
 
 
