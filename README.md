@@ -15,6 +15,7 @@ pip install requests
 pip install bs4
 pip install wikipedia
 apt-get install youtube-dl -y
+pip install youtube-dl -U
 ```
 
 Instruction's at :
