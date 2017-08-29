@@ -6,6 +6,7 @@ https://medium.com/@arbazhussain/hackbot-update-v1-2-whats-new-db82e6038edd
 
 ```
 sudo -H pip install --upgrade youtube-dl
+sudo apt-get install -y libav-tools
 git clone https://github.com/arbazkiraak/hackbot.git
 cd hackbot
 pip install lxml
@@ -16,6 +17,10 @@ pip install bs4
 pip install wikipedia
 apt-get install youtube-dl -y
 pip install youtube-dl -U
+
+cd hackbot
+echo APIKEY > api.txt
+python hackbot.py
 ```
 
 Instruction's at :
