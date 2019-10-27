@@ -7,13 +7,13 @@ import urllib2
 import re
 import json
 import datetime
-import requests
+import cfscrape
 import threading
 import wikipedia
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 import youtube_dl
-
+scraper = cfscrape.create_scraper()
 def handle(msg):
 		chat_id = msg['chat']['id']
 		command = msg['text']
@@ -40,7 +40,7 @@ def handle(msg):
 		
 			#automatic hackerone notifier
 		def notifyh1():
-			site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
+			site = scraper.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
 			json_data = json.loads(site.text)
 			rep_id = json_data['reports'][0]['id']
 			rep_str = str(rep_id)
@@ -124,7 +124,7 @@ def handle(msg):
 			if program:
 				bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
 				bot.sendMessage(chat_id, 'Program: '+program)
-				site = requests.get('https://hackerone.com/hacktivity.json?filter=type%3Apublic%20to%3A'+program)
+				site = scraper.get('https://hackerone.com/hacktivity.json?filter=type%3Apublic%20to%3A'+program)
 				json_data = json.loads(site.text)
 				for i in range(10):
 					try:
@@ -140,7 +140,7 @@ def handle(msg):
 		#common hacktivity
 			else:
 				bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading HackerOne Disclosed Bugs!  \xF0\x9F\x9A\x80')
-				site = requests.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
+				site = scraper.get('https://hackerone.com/hacktivity.json?sort_type=latest_disclosable_activity_at&filter=type%3Apublic')
 				json_data = json.loads(site.text)
 				for i in range(10):
 					try:
@@ -197,7 +197,7 @@ def handle(msg):
 	
 		#coin
 		elif command.startswith('coin') or command.startswith('Coin'):
-				res = requests.get('https://api.coinsecure.in/v1/exchange/ticker')
+				res = scraper.get('https://api.coinsecure.in/v1/exchange/ticker')
 				#print(res.text)
 				j = json.loads(res.text)
 				sell = j['message']['bid']
@@ -209,7 +209,7 @@ def handle(msg):
 		elif command.startswith('#'):
 				repnum=command[1:]
 				bot.sendMessage(chat_id,'\xF0\x9F\x9A\x80  Loading report  \xF0\x9F\x9A\x80')
-				site = requests.get('https://hackerone.com/reports/'+repnum+'.json')
+				site = scraper.get('https://hackerone.com/reports/'+repnum+'.json')
 				json_data = json.loads(site .text)
 				if json_data['has_bounty?'] != 0:
 					bounty='Bounty: '+json_data['formatted_bounty']
