@@ -18,7 +18,7 @@ def handle(msg):
 		chat_id = msg['chat']['id']
 		command = msg['text']
 
-		print "Got Command : %s " %command
+		print "Got Command : %s " %command"
 		bot.sendMessage(chat_id,'\xF0\x9F\x98\x81 Welcome to -+ HackBot v1.2 +- (https://goo.gl/mxQ4Sv) \xE2\x9C\x94')
 	
 	#welcome screen and help
