@@ -19,7 +19,7 @@ apt-get install youtube-dl -y
 pip install youtube-dl -U
 
 cd hackbot
-echo APIKEY > api.txt
+echo APIKEY > 5298397759:AAHmZsvhW8DQhKHowIt0MM-_VzVNf_Pv5K8
 python hackbot.py
 ```
 
